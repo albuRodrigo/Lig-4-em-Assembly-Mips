@@ -39,7 +39,7 @@ bgt $a2,7,acabou
 
 
 la $a0, matriz #----Salvo endereço da matriz 
-la $a0, matriz #----Salvo endereço da matriz
+addi $a2,$a2,-1 #------- corrigindo endereço da matriz
 
 jal funcão_local_disponivel
 
