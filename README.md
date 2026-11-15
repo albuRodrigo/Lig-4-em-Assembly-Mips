@@ -1,9 +1,14 @@
+
 # Lig-4-em-Assembly-Mips
 .data
-matriz: .word 0:64 #--crio uma matriz [8] [8] chea de 0
+matriz: .word 0:64 #--crio uma matriz [8] [8] cheia de 0
+jogada_invalida: .asciiz "\n Esse coluna ja foi prenchida, escolha outro valor\n"
 
+jogador: .asciiz "\n Jogador, esecolha uma coluna!\n"
 
 .text
+
+
 
 la $a0, matriz #----Salvo endereço da matriz
 
@@ -15,6 +20,35 @@ li $s2, 0xFFFFFFFF #--- branco
 
 li $a1, 0x10010000#---endereço tela mars
 
+li $a3,0
+
+main:
+
+inicio_main:
+
+la $t1,jogador
+move $a0,$t1
+li $v0,4
+syscall
+
+li $v0,5
+syscall
+move $a2,$v0
+
+bgt $a2,7,acabou
+
+
+la $a0, matriz #----Salvo endereço da matriz 
+la $a0, matriz #----Salvo endereço da matriz
+
+jal funcão_local_disponivel
+
+
+
+
+
+j inicio_main
+
 
 #---pintar um quadrado-----
 
@@ -24,7 +58,7 @@ funcão_local_disponivel: #---procurar o 0(zero) mais baixo
 #---- $a3 ----- é par ou impar, pra ver quem é o jogador
 #---- $a0 ----- é a matriz, pro calculo base
 li $t1, 7 #--ultima linha
-addi $a1,$a1,-1 #---- faço a correção de dados, aqui vai de 0....7
+
 
 
 procura:
@@ -61,13 +95,21 @@ beq $t5,1,impar
 
 
 par:
-sw $s0,0 ($t4)
-sw $s0,0 ($t2)
-
+sw $s0,0 ($t4)#-----pinto no bit map
+sw $s0,0 ($t2)#---pinto na matriz----OPICIONAL------
+addi $a3,$a3,1 #---- se a jogada deu certo, somo, para na proxima vez ser outro jogador
 jr $ra
+
 
 impar:
 sw $s2,0($t4)
 sw $s2, 0($t2)
-
+addi $a3,$a3,1 #---- se a jogada deu certo, somo, para na proxima vez ser outro jogador
 jr $ra
+
+acabou:
+la $t5,jogada_invalida
+move $a0,$t5
+li $v0,4 #----imprime mensagem
+syscall
+j inicio_main
